@@ -24,6 +24,6 @@ export default {
   color: #2c3e50;
   margin-top: 60px;
   min-height: 100vh;
-  padding-top: 15%;
+  padding-top: 5%;
 }
 </style>

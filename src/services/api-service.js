@@ -1,10 +1,10 @@
 import axios from "axios";
 
-const url = 'http://localhost:5000';
+const url = 'http://localhost:5000/';
 
 export const ApiService = {
-    get() {
-        return axios.get(url)
+    get(resource) {
+        return axios.get(url + resource)
     },
 
     post(resource, value) {

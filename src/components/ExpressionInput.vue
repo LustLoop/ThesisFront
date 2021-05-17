@@ -1,15 +1,21 @@
 <template>
   <div>
-    <mathlive-mathfield id="mf" @focus="ping" class="expression-field" ref="mathfield"
+    <div class="remove-expression-button" @click="addNewExpression"><a-icon type="close" /></div>
+    <a-select default-value="Test" class="userSelector">
+      <a-select-option v-for="u in usrs" :key="u.login">
+        {{u.login}}
+      </a-select-option>
+    </a-select>
+    <mathlive-mathfield id="mf" @blur="checkIfValid" class="expression-field" ref="mathfield"
                         :options="{virtualKeyboardMode:'manual', smartFence:false, fontsDirectory:'../../node_modules'}"
                         v-model="expression">f(x)=
     </mathlive-mathfield>
-    <a-button @click="sendTestData" type="primary">Send</a-button>
   </div>
 </template>
 
 <script>
-import axios from "axios";
+import store from "../store/index";
+import {mapGetters} from "vuex";
 
 export default {
   name: "ExpressionInput",
@@ -18,17 +24,46 @@ export default {
       expression: ''
     }
   },
+  props: {
+    output_data: {type: Object}
+  },
   methods: {
-    ping() {
+    checkIfValid() {
+      // const expression = { latexExpression: this.expression}
       console.log(this.expression + " ping");
-    },
-    sendTestData() {
-      const expression = { latexExpression: this.expression}
-      axios.post('http://localhost:5000', expression)
     }
-  }
+  },
+  computed: {
+    ...mapGetters([
+      'users'
+    ]),
+    usrs() {
+      return this.users
+    }
+  },
+  store
 }
 </script>
 
 <style scoped>
+
+.expression-field {
+  width: 70%;
+}
+
+.remove-expression-button {
+  padding: 0.5rem 1rem 0 1%;
+  float: right;
+}
+
+.remove-expression-button:hover {
+  color: red;
+}
+
+.userSelector {
+  float: right;
+  width: 15%;
+  margin: 0.5rem;
+}
+
 </style>

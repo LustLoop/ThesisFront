@@ -1,10 +1,11 @@
 <template>
   <div>
     <div class="expression-input" v-for="index in expressionCount" :id="index" :key="index" >
-      <div class="remove-expression-button" @click="addNewExpression"><a-icon type="close" /></div>
-      <ExpressionInput>g(x)=</ExpressionInput>
+      <ExpressionInput />
     </div>
-    <a-button @click="addNewExpression" type="primary">Add new expression</a-button>
+    <div class="newExpression">
+      <a-button @click="addNewExpression" type="primary">Add new expression</a-button>
+    </div>
   </div>
 </template>
 
@@ -12,6 +13,7 @@
 
 import store from "../store/index";
 import ExpressionInput from "@/components/ExpressionInput";
+import {FETCH_USERS} from "@/store/actions.type";
 
 export default {
   name: "MainPage",
@@ -28,7 +30,10 @@ export default {
       this.expressionCount++
     }
   },
-  store
+  store,
+  mounted() {
+    this.$store.dispatch(FETCH_USERS)
+  },
 }
 </script>
 
@@ -39,18 +44,14 @@ export default {
     border-radius: 5px;
     justify-content: center;
     width: 50%;
-    margin: 0 auto;
+    margin: 3rem auto;
     padding-bottom: 0.5rem;
     text-align: center;
   }
 
-  .remove-expression-button {
-    padding: 0.5rem 1rem 0 0;
-    float: right;
-  }
-
-  .remove-expression-button:hover {
-    color: red;
+  .newExpression {
+    width: 10%;
+    margin: 1rem auto;
   }
 
 </style>
