@@ -1,7 +1,7 @@
 <template>
   <div>
-    <div class="expression-input" v-for="index in expressionCount" :id="index" :key="index" >
-      <ExpressionInput />
+    <div v-for="index in expressionCount" :id="index" :key="index" >
+      <ExpressionInput v-if="usrs.length > 0" :users="usrs" />
     </div>
     <div class="newExpression">
       <a-button @click="addNewExpression" type="primary">Add new expression</a-button>
@@ -11,9 +11,9 @@
 
 <script>
 
-import store from "../store/index";
 import ExpressionInput from "@/components/ExpressionInput";
 import {FETCH_USERS} from "@/store/actions.type";
+import {mapGetters} from "vuex";
 
 export default {
   name: "MainPage",
@@ -30,24 +30,22 @@ export default {
       this.expressionCount++
     }
   },
-  store,
   mounted() {
     this.$store.dispatch(FETCH_USERS)
   },
+  computed: {
+    ...mapGetters([
+      'users'
+    ]),
+    usrs() {
+      console.log(this.users)
+      return this.users
+    }
+  }
 }
 </script>
 
 <style scoped>
-
-  .expression-input {
-    border: 1px solid lightgray;
-    border-radius: 5px;
-    justify-content: center;
-    width: 50%;
-    margin: 3rem auto;
-    padding-bottom: 0.5rem;
-    text-align: center;
-  }
 
   .newExpression {
     width: 10%;

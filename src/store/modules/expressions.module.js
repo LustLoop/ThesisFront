@@ -10,7 +10,7 @@ const initialState = {
 export const state = { ...initialState };
 
 export const actions = {
-    async [FETCH_USERS](context) {
+    [FETCH_USERS](context) {
         ApiService.get('users')
             .then((response) => {
                 context.commit(SET_USERS, response.data)
