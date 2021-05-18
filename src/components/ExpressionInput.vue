@@ -1,31 +1,33 @@
 <template>
   <div style="display: flex">
     <div class="expression-input">
-      <div class="remove-expression-button" @click="addNewExpression"><a-icon type="close" /></div>
-      <mathlive-mathfield id="mf" @blur="checkIfValid" class="expression-field" ref="mathfield"
+      <div class="remove-expression-button"><a-icon type="close" /></div>
+      <mathlive-mathfield id="mf" class="expression-field" @blur="saveNewExpression" ref="mathfield"
                           :options="{virtualKeyboardMode:'manual', smartFence:false, fontsDirectory:'../../node_modules'}"
                           v-model="expression">f(x)=
       </mathlive-mathfield>
     </div>
     <div class="userSelectorsBlock">
-      <a-select class="userSelector" :defaultValue="users[0].login" @change="ping">
+      <a-select v-for="index in userSelectorsCount" :key="index" class="userSelector" @change="saveNewVariantUser">
         <a-select-option v-for="u in users" :key="u.login">
           {{u.login}}
         </a-select-option>
       </a-select>
+      <a-icon type="plus" @click="addUserSelector"/>
     </div>
   </div>
 </template>
 
 <script>
 
-import {FETCH_USERS} from "@/store/actions.type";
+import {SAVE_EXPRESSION, SAVE_USER_VARIANT} from "@/store/actions.type";
 
 export default {
   name: "ExpressionInput",
   data() {
     return {
       expression: '',
+      userSelectorsCount: 1
     }
   },
   props: {
@@ -41,10 +43,16 @@ export default {
     ping() {
       console.log(this.usrs)
     },
-    saveExpression() {
-      this.$store.dispatch(FETCH_USERS)
+    addUserSelector() {
+      this.userSelectorsCount++
+    },
+    saveNewVariantUser(login) {
+      this.$store.dispatch(SAVE_USER_VARIANT, {login: login, variantId: this.$props.id})
+    },
+    saveNewExpression() {
+      this.$store.dispatch(SAVE_EXPRESSION, {variantId: this.$props.id, content: this.expression})
     }
-  }
+  },
 }
 </script>
 
@@ -69,6 +77,7 @@ export default {
   min-width: 5%;
   width: auto;
   margin: 3rem auto 3rem 0;
+  padding-right: 1rem;
 }
 
 .userSelector {

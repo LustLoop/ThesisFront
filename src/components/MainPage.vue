@@ -1,7 +1,7 @@
 <template>
   <div>
-    <div v-for="index in expressionCount" :id="index" :key="index" >
-      <ExpressionInput v-if="usrs.length > 0" :users="usrs" />
+    <div v-for="index in expressionCount" :key="index" >
+      <ExpressionInput v-if="usrs.length > 0" :users="usrs" :id="index"/>
     </div>
     <div class="newExpression">
       <a-button @click="addNewExpression" type="primary">Add new expression</a-button>
