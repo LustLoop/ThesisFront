@@ -1,6 +1,7 @@
 <template>
   <div style="display: flex">
     <div class="expression-input">
+      {{this.status}}
       <div class="remove-expression-button"><a-icon type="close" /></div>
       <mathlive-mathfield id="mf" class="expression-field" @blur="saveNewExpression" ref="mathfield"
                           :options="{virtualKeyboardMode:'manual', smartFence:false, fontsDirectory:'../../node_modules'}"
@@ -8,7 +9,7 @@
       </mathlive-mathfield>
     </div>
     <div class="userSelectorsBlock">
-      <a-select v-for="index in userSelectorsCount" :key="index" class="userSelector" @change="saveNewVariantUser">
+      <a-select v-for="index in userSelectorsCount" :key="index" class="userSelector" @change="saveNewVariantUser($event, index)">
         <a-select-option v-for="u in users" :key="u.login">
           {{u.login}}
         </a-select-option>
@@ -21,13 +22,15 @@
 <script>
 
 import {SAVE_EXPRESSION, SAVE_USER_VARIANT} from "@/store/actions.type";
+import {ApiService} from "@/services/api-service";
 
 export default {
   name: "ExpressionInput",
   data() {
     return {
       expression: '',
-      userSelectorsCount: 1
+      userSelectorsCount: 1,
+      status: ''
     }
   },
   props: {
@@ -37,7 +40,6 @@ export default {
   },
   methods: {
     checkIfValid() {
-      // const expression = { latexExpression: this.expression}
       console.log(this.expression + " ping");
     },
     ping() {
@@ -46,11 +48,19 @@ export default {
     addUserSelector() {
       this.userSelectorsCount++
     },
-    saveNewVariantUser(login) {
-      this.$store.dispatch(SAVE_USER_VARIANT, {login: login, variantId: this.$props.id})
+    saveNewVariantUser(login, selectorId) {
+      this.$store.dispatch(SAVE_USER_VARIANT, {variantId: this.$props.id, selectorId: selectorId - 1, login: login})
     },
     saveNewExpression() {
-      this.$store.dispatch(SAVE_EXPRESSION, {variantId: this.$props.id, content: this.expression})
+      ApiService.post('checkValidity', {content: this.expression})
+          .then((response) => {
+            if (response.data) {
+              this.status = 'valid'
+              this.$store.dispatch(SAVE_EXPRESSION, {variantId: this.$props.id, content: this.expression})
+            } else {
+              this.status = 'invalid'
+            }
+          });
     }
   },
 }

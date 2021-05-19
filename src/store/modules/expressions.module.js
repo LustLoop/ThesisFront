@@ -10,18 +10,18 @@ const initialState = {
 export const state = { ...initialState };
 
 export const actions = {
-    async [FETCH_USERS](context) {
+    [FETCH_USERS](context) {
         ApiService.get('users')
             .then((response) => {
                 context.commit(SET_USERS, response.data)
             });
     },
-    async [SAVE_USER_VARIANT](context, payload) {
+    [SAVE_USER_VARIANT](context, payload) {
         context.commit(ADD_USER_VARIANT, payload)
     },
-    async [SAVE_EXPRESSION](context, payload) {
+    [SAVE_EXPRESSION](context, payload) {
         context.commit(ADD_EXPRESSION, payload)
-    }
+    },
 };
 
 export const mutations = {
@@ -29,17 +29,17 @@ export const mutations = {
         state.users = users
     },
     [ADD_USER_VARIANT](state, payload) {
-        let currentUser = state.users.find(u => u.login === payload.login)
-        currentUser.variantId = payload.variantId
+        let currentUser = getCurrentVariant(payload.variantId)
+        if (currentUser[0].users === undefined) {
+            currentUser[0].users = []
+        }
+        currentUser[0].users[payload.selectorId] = payload.login
     },
     [ADD_EXPRESSION](state, payload) {
-        let currentExpression = state.expressions.filter(function (expression) {
-            return expression.variantId === payload.variantId
-        })
+        let currentExpression = getCurrentVariant(payload.variantId)
         if (currentExpression.length === 0) {
             state.expressions.push(payload)
         } else {
-            console.log('here')
             currentExpression[0].content = payload.content
         }
     }
@@ -49,6 +49,12 @@ export const getters = {
     users(state) {
         return state.users;
     }
+}
+
+function getCurrentVariant(payload) {
+    return  state.expressions.filter(function (expression) {
+        return expression.variantId === payload
+    })
 }
 
 export default {

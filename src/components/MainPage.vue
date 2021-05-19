@@ -38,7 +38,6 @@ export default {
       'users'
     ]),
     usrs() {
-      console.log(this.users)
       return this.users
     }
   }
